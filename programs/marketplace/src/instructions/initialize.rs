@@ -18,6 +18,12 @@ pub struct Initialize <'info>{
     )]
     pub marketplace_account: Account<'info, MarketplaceAccount>,
 
+    #[account(
+        seeds = [b"treasury", marketplace_account.key().as_ref()],
+        bump
+    )]
+    pub treasury: SystemAccount<'info>,
+
     pub system_program: Program<'info, System>,
 }
 
@@ -31,9 +37,9 @@ impl<'info> Initialize<'info> {
         
         self.marketplace_account.set_inner(MarketplaceAccount { 
             authority: self.authority.key(), 
-            fee_basis_points: fee_basis_points, 
-            trusted_collections: Vec::new(), 
+            fee_basis_points: fee_basis_points,  
             marketplace_bump: bumps.marketplace_account ,
+            treasury_bump: bumps.treasury,
         });
 
         Ok(())
