@@ -56,7 +56,7 @@ pub struct List<'info> {
     pub listing_ata: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
-        seeds = [b"marketplace"],
+        seeds = [b"marketplace".as_ref()],
         bump = marketplace_account.marketplace_bump,
     )]
     pub marketplace_account: Account<'info, MarketplaceAccount>,
@@ -101,6 +101,8 @@ impl <'info> List <'info>{
     pub fn initialize_listing(&mut self, price: u64, bumps: &ListBumps)->Result<()>{
         
         require!(price > 0, MarketplaceError::InvalidPrice);
+        require!(self.seller_ata.amount > 0, MarketplaceError::NoToken);
+
         self.listing.set_inner(ListingAccount { 
             seller: self.seller.key(), 
             mint: self.mint.key(), 
